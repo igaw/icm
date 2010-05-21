@@ -1,0 +1,39 @@
+#!/usr/bin/python
+
+import louie
+import logging
+
+class CounterStats(object):
+    def __init__(self, ifname, rx_bytes = 0, tx_bytes = 0):
+        self.rx_bytes = rx_bytes
+        self.tx_bytes = tx_bytes
+
+    def send_update(self):
+        logging.debug("send counter_stats_update event")
+        louie.send("counter_stats_update", counter=self)
+
+        self.rx_bytes = self.rx_bytes + 1
+        self.tx_bytes = self.tx_bytes + 1
+
+class Main:
+    def __init__(self):
+        pass
+
+    def set_counter_update(self, counter):
+        logging.debug("counters have changed")
+
+    def run(self):
+        cs = CounterStats("eth0")
+
+        cs.send_update()
+        louie.connect(self.set_counter_update, "counter_stats_update")
+        cs.send_update()
+        louie.disconnect(self.set_counter_update, "counter_stats_update")
+        cs.send_update()
+
+if __name__ == "__main__":
+    FORMAT = "%(levelname)s %(filename)-15s %(lineno)3d %(funcName)-20s: %(message)s"
+    logging.basicConfig(level = logging.DEBUG, format = FORMAT)
+
+    main = Main()
+    main.run()

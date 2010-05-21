@@ -1,0 +1,43 @@
+<gcm>
+  <config name="Router1">
+    <type>wifi</type>
+    <ssid>Router1</ssid>
+    <passphrase>citcitcit</passphrase>
+  </config>
+
+  <config name="GlobeTrotter HSUPA Modem 351721030157214,PK29997020">
+    <type>cellular</type>
+    <pin>9931</pin>
+    <apn>webmobil1</apn>
+  </config>
+
+  <config name="Synthetic Device 1234567890">
+    <type>cellular</type>
+    <pin>2468</pin>
+    <apn>T-MeeGo</apn>
+  </config>
+
+  <application name="browser">
+    <id>0</id>
+    <priority>high</priority>
+  </application>
+
+  <application name="streaming">
+    <id>1</id>
+    <priority>default</priority>
+  </application>
+
+  <!-- order is important: orderded by 'costs' --> 
+  <device name="cellular">
+    <priority>high</priority>
+  </device>
+
+  <device name="wifi">
+    <!-- <priority>high</priority> -->
+    <priority>default</priority>
+  </device>
+
+  <device name="ethernet">
+    <priority>low</priority>
+  </device>
+</gcm>

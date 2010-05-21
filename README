@@ -1,0 +1,64 @@
+- Install
+    sudo cp gcm.conf /etc/dbus-1/system.d/
+    sudo killall -HUP dbus-daemon
+
+- Config
+    $ cat config.xml
+
+<gcm>
+  <config name="Router1">
+    <type>wifi</type>
+    <ssid>Router1</ssid>
+    <passphrase>XXXXXXX</passphrase>
+  </config>
+
+  <config name="GlobeTrotter HSUPA Modem 351721030157214,PK29997020">
+    <type>cellular</type>
+    <pin>XXXX</pin>
+    <apn>webmobil1</apn>
+  </config>
+
+  <config name="Synthetic Device 1234567890">
+    <type>cellular</type>
+    <pin>2468</pin>
+    <apn>T-MeeGo</apn>
+  </config>
+
+  <application name="browser">
+    <id>0</id>
+    <priority>high</priority>
+  </application>
+
+  <application name="streaming">
+    <id>1</id>
+    <priority>default</priority>
+  </application>
+
+  <!-- order is important: orderded by 'costs' --> 
+  <device name="cellular">
+    <priority>high</priority>
+  </device>
+
+  <device name="wifi">
+    <!-- <priority>high</priority> -->
+    <priority>default</priority>
+  </device>
+
+  <device name="ethernet">
+    <priority>low</priority>
+  </device>
+</gcm>
+
+- Run
+    $ python main.py
+
+- Dependencie:
+  gcm:
+    python dbus
+
+  demo:
+    pygtk
+    pywebkitgtk
+    pygst
+
+    icons: http://www.oxygen-icons.org

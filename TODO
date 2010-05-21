@@ -1,0 +1,22 @@
+connman:
+
+- The connman docs say that the state will be 'online' when things go right.
+  But I saw sometimes only 'ready' depending which interface is used. Check
+  if this is on purpose or if this is a bug in connman.
+
+- The default behaviour is to autoconnect each new device. There seems
+  no knob to change this behaviour.
+
+
+ofono:
+
+- If modem is attached then we get a Powered = 0, but meanwhile it powering up
+  is on the way. So we get always operation in progress error message if
+  we try to powerup it too early. Maybe we should just wait after a new
+  modem appears for a second and then if there was no auto power we could
+  power it up then.
+
+gcm:
+
+- retry logic: if a connection has been requested gcm should retry until
+  it is successfull.

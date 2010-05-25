@@ -1,4 +1,4 @@
-#  GENIVI Connection Manager
+#  IVI Connection Manager
 #
 #  Copyright (C) 2010  BMW Car IT GmbH. All rights reserved.
 #
@@ -18,12 +18,12 @@
 import collections
 import dbus_object
 
-class GcmService(dbus_object.dbus_object):
+class Manager(dbus_object.dbus_object):
     def __init__(self, bus, uid):
-        dbus_object.dbus_object.__init__(self, bus, "org.genivi.gcm", uid, "gcm_gcm_service")
+        dbus_object.dbus_object.__init__(self, bus, "de.bmwcarit.icm", uid, "icm_manager")
 
         self._attr = collections.defaultdict(lambda: "<missing>")
-        self.register_interface("org.genivi.gcm.GcmService", self._attr)
+        self.register_interface("de.bmwcarit.icm.Manager", self._attr)
 
         self.update_properties()
 
@@ -37,25 +37,16 @@ class GcmService(dbus_object.dbus_object):
 
     #############################################################################
 
-    def ConnectionRequest(self):
-        return self.get_interface("org.genivi.gcm.GcmService").ConnectionRequest()
+    def CreateIcmService(self, id):
+        return self.get_interface("de.bmwcarit.icm.Manager").CreateIcmService(id)
 
-    def ConnectionRelease(self):
-        self.get_interface("org.genivi.gcm.GcmService").ConnectionRelease()
+    def DestroyIcmService(self, path):
+        self.get_interface("de.bmwcarit.icm.Manager").DestroyIcmService(path)
 
-    @property
-    def State(self):
-        return self._attr["State"]
-
-    @property
-    def RX_Bytes(self):
-        return self._attr["RX.Bytes"]
+    def Reset(self):
+        self.get_interface("de.bmwcarit.icm.Manager").Reset()
 
     @property
-    def TX_Bytes(self):
-        return self._attr["TX.Bytes"]
-
-    @property
-    def Name(self):
-        return self._attr["Name"]
+    def Foo(self):
+        return self._attr["Foo"]
 

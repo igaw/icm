@@ -1,4 +1,4 @@
-#  GENIVI Connection Manager
+#  IVI Connection Manager
 #
 #  Copyright (C) 2010  BMW Car IT GmbH. All rights reserved.
 #

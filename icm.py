@@ -1,4 +1,4 @@
-#  GENIVI Connection Manager
+#  IVI Connection Manager
 #
 #  Copyright (C) 2010  BMW Car IT GmbH. All rights reserved.
 #
@@ -28,18 +28,18 @@ import config
 import serviceselector
 import counter
 
-class GCM(gobject.GObject):
-    def __init__(self, bus, gcm_manager):
+class ICM(gobject.GObject):
+    def __init__(self, bus, icm_manager):
         gobject.GObject.__init__(self)
 
         self.bus = bus
-        self._gcm_manager = gcm_manager
+        self._icm_manager = icm_manager
 
         self.hid = {}
 
-        self._gcm_manager.connect("add-service", self.gcm_manager_add_service)
-        self._gcm_manager.connect("remove-service", self.gcm_manager_remove_service)
-        self._gcm_manager.connect("reset", self.reset)
+        self._icm_manager.connect("add-service", self.icm_manager_add_service)
+        self._icm_manager.connect("remove-service", self.icm_manager_remove_service)
+        self._icm_manager.connect("reset", self.reset)
 
         # connman dbus objects
         self.connman_manager = None
@@ -126,11 +126,11 @@ class GCM(gobject.GObject):
             traceback.print_exc()
             exit(1)
 
-    def gcm_manager_add_service(self, manager, service):
+    def icm_manager_add_service(self, manager, service):
         self._connect(service, "request-connection", self.add_app_id)
         self._connect(service, "release-connection", self.rem_app_id)
 
-    def gcm_manager_remove_service(self, manager, service):
+    def icm_manager_remove_service(self, manager, service):
         self._disconnect(service, "request-connection")
         self._disconnect(service, "release-connection")
 
@@ -184,7 +184,7 @@ class GCM(gobject.GObject):
             try:
                 modem.Powered = True
             except dbus.DBusException as e:
-                # XXX Is this a bug in gcm or ofono?
+                # XXX Is this a bug in icm or ofono?
                 logging.warning("Could not power up modem %s. Try again in 100 ms (%s)" % (modem, e))
 
     def handle_modem_pin_required(self, modem, pinrequired):
@@ -204,7 +204,7 @@ class GCM(gobject.GObject):
                 try:
                     modem.EnterPin("pin", cfg.pin)
                 except dbus.DBusException:
-                    # XXX Is this a bug in gcm or ofono?
+                    # XXX Is this a bug in icm or ofono?
                     logging.warning("Could not enter pin")
             else:
                 logging.debug("no config found for '%s'" % (modem.uid))
@@ -212,7 +212,7 @@ class GCM(gobject.GObject):
     def get_services(self):
         return self.services.values()
 
-    def add_app_id(self, gcm_service, id):
+    def add_app_id(self, icm_service, id):
         logging.debug("add_app_id: %s" % (id))
 
         cfgs = config.id2configurations(id)
@@ -237,15 +237,15 @@ class GCM(gobject.GObject):
             logging.debug("selected services %s" % (service))
             logging.debug("service is in state %s" % (service.State))
             
-            hid = service.connect("property-changed", gcm_service.service_property_changed)
-            self.hid[gcm_service]["property-changed"] = hid
+            hid = service.connect("property-changed", icm_service.service_property_changed)
+            self.hid[icm_service]["property-changed"] = hid
 
-            hid = self.counter.connect("counter-update", gcm_service.handle_counter_update)
-            self.hid[gcm_service]["counter-update"] = hid
+            hid = self.counter.connect("counter-update", icm_service.handle_counter_update)
+            self.hid[icm_service]["counter-update"] = hid
 
-            gcm_service.set_connection_state(service.State)
-            gcm_service.set_name(service.Name)
-            gcm_service.set_interface(service.Ethernet_Interface)
+            icm_service.set_connection_state(service.State)
+            icm_service.set_name(service.Name)
+            icm_service.set_interface(service.Ethernet_Interface)
 
         if service != None and service.State in ["idle", "failure"]:
             logging.debug("tell connamn to connect to service '%s'" % (service))
@@ -265,7 +265,7 @@ class GCM(gobject.GObject):
 
         return self.appreq[id]
 
-    def rem_app_id(self, gcm_service, id):
+    def rem_app_id(self, icm_service, id):
         logging.debug("rem_app_id: %s" % (id))
 
         service = self.appreq[id].service
@@ -275,13 +275,13 @@ class GCM(gobject.GObject):
 
             service.srv_disconnect()
 
-        service.disconnect(self.hid[gcm_service]["counter-update"])
-        service.disconnect(self.hid[gcm_service]["property-changed"])
+        service.disconnect(self.hid[icm_service]["counter-update"])
+        service.disconnect(self.hid[icm_service]["property-changed"])
 
         del self.appreq[id]
 
     def reset(self, object):
-        logging.debug("reset gcm")
+        logging.debug("reset icm")
 
         for id, appreq in self.appreq.items():
             logging.debug("reset id %s" % (id))

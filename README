@@ -1,11 +1,19 @@
-- Install
-    sudo cp gcm.conf /etc/dbus-1/system.d/
-    sudo killall -HUP dbus-daemon
+Introduction
+------------
+
+This is just a proof of concept for an IVI connectio manager. The aim
+is to prototyp such a system with connman and ofono. After this phase
+a C implementation will be done.
+
+
+
+- Install sudo cp icm.conf /etc/dbus-1/system.d/ sudo killall -HUP
+    dbus-daemon
 
 - Config
     $ cat config.xml
 
-<gcm>
+<icm>
   <config name="Router1">
     <type>wifi</type>
     <ssid>Router1</ssid>
@@ -47,13 +55,13 @@
   <device name="ethernet">
     <priority>low</priority>
   </device>
-</gcm>
+</icm>
 
 - Run
     $ python main.py
 
 - Dependencie:
-  gcm:
+  icm:
     python dbus
 
   demo:

@@ -1,4 +1,4 @@
-#  GENIVI Connection Manager
+#  IVI Connection Manager
 #
 #  Copyright (C) 2010  BMW Car IT GmbH. All rights reserved.
 #
@@ -23,33 +23,33 @@ import pdb
 import logging
 import traceback
 
-import gcm_service
+import icm_service
 
 class Manager(dbus.service.Object):
     def __init__(self, wrapper, bus, object_path='/'):
         dbus.service.Object.__init__(self, bus, object_path)
         self.bus = bus
         self.wrapper = wrapper
-        self.gcm_services = {}
+        self.icm_services = {}
 
-    @dbus.service.method("org.genivi.gcm.Manager", in_signature="", out_signature="a{sv}")
+    @dbus.service.method("de.bmwcarit.icm.Manager", in_signature="", out_signature="a{sv}")
     def GetProperties(self):
         logging.debug("get properties")
         return { "Foo" : "Bar" }
 
-    @dbus.service.signal("org.genivi.gcm.Manager", signature="sv")
+    @dbus.service.signal("de.bmwcarit.icm.Manager", signature="sv")
     def PropertyChanged(self, key, value):
         logging.debug("sending property changed signal for %s %s" % (key, value))
         pass
 
-    @dbus.service.method("org.genivi.gcm.Manager", in_signature="sv", out_signature="")
+    @dbus.service.method("de.bmwcarit.icm.Manager", in_signature="sv", out_signature="")
     def SetProperty(self, key, value):
         logging.debug("set property %s to %s" % (str(key), str(value)))
         pass
 
-    @dbus.service.method("org.genivi.gcm.Manager", in_signature="i", out_signature="o",
+    @dbus.service.method("de.bmwcarit.icm.Manager", in_signature="i", out_signature="o",
                          sender_keyword="sender")
-    def CreateGcmService(self, id, sender=None):
+    def CreateIcmService(self, id, sender=None):
         logging.debug("create new service for sender %s" % sender)
 
         # No need to check permission if application is allowed to
@@ -60,18 +60,18 @@ class Manager(dbus.service.Object):
         # ).
 
         uid = "/service/%d" % (id)
-        if uid in self.gcm_services:
+        if uid in self.icm_services:
             logging.debug("app with id %d has already requested a connnection" % id)
             return uid
 
         try:
             logging.debug("adding service %s to dbus" % uid)
 
-            gsrv = gcm_service.GcmServiceWrapper(self.bus, uid, id)
+            gsrv = icm_service.IcmServiceWrapper(self.bus, uid, id)
             self.wrapper.add_service(gsrv)
-            gsrv._gcm_service.add_to_connection(self.bus, uid)
+            gsrv._icm_service.add_to_connection(self.bus, uid)
 
-            self.gcm_services[uid] = gsrv
+            self.icm_services[uid] = gsrv
 
             return uid
         except:
@@ -80,38 +80,38 @@ class Manager(dbus.service.Object):
 
         raise LookupError
 
-    @dbus.service.method("org.genivi.gcm.Manager", in_signature="o", out_signature="",
+    @dbus.service.method("de.bmwcarit.icm.Manager", in_signature="o", out_signature="",
                          sender_keyword="sender")
-    def DestroyGcmService(self, uid, sender=None):
+    def DestroyIcmService(self, uid, sender=None):
         logging.debug("destroy service '%s' for sender %s" % (uid, sender))
 
-        if uid not in self.gcm_services:
+        if uid not in self.icm_services:
             logging.debug("app with id %d has not requested a connection" % id)
             raise LookupError
 
         try:
             logging.debug("removing service %s from dbus" % uid)
 
-            gsrv = self.gcm_services.pop(uid)
+            gsrv = self.icm_services.pop(uid)
             self.wrapper.remove_service(gsrv)
-            gsrv._gcm_service.remove_from_connection()
+            gsrv._icm_service.remove_from_connection()
 
             gsrv = None
         except:
             traceback.print_exc()
 
-    @dbus.service.method("org.genivi.gcm.Manager", in_signature="", out_signature="",
+    @dbus.service.method("de.bmwcarit.icm.Manager", in_signature="", out_signature="",
                          sender_keyword="sender")
     def Reset(self, sender=None):
         logging.debug("reset request from %s" % (sender))
 
-        for id, gcm_service in self.gcm_services.items():
+        for id, icm_service in self.icm_services.items():
             try:
-                gcm_service.reset()
+                icm_service.reset()
             except:
                 pass
-            gcm_service._gcm_service.remove_from_connection()
-        self.gcm_services = {}
+            icm_service._icm_service.remove_from_connection()
+        self.icm_services = {}
 
         self.wrapper.reset()
 
@@ -132,7 +132,7 @@ class ManagerWrapper(gobject.GObject):
         gobject.GObject.__init__(self)
         self._manager = Manager(self, bus, object_path)
         self.bus = bus
-        self.gcm_services = {}
+        self.icm_services = {}
 
     def update_state(self, text):
         logging.debug("update_state called");

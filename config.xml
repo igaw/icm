@@ -1,4 +1,4 @@
-<gcm>
+<icm>
   <config name="Router1">
     <type>wifi</type>
     <ssid>Router1</ssid>
@@ -40,4 +40,4 @@
   <device name="ethernet">
     <priority>low</priority>
   </device>
-</gcm>
+</icm>

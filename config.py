@@ -1,4 +1,4 @@
-#  GENIVI Connection Manager
+#  IVI Connection Manager
 #
 #  Copyright (C) 2010  BMW Car IT GmbH. All rights reserved.
 #
@@ -125,17 +125,17 @@ class config_parser:
             l.append(wrapper(d))
         return l
 
-    def _handle_gcm(self, gcm):
-        self.configs = self._parse_type(gcm, "config", config_wrapper)
-        self.applications = self._parse_type(gcm, "application", application_wrapper)
-        self.devices = self._parse_type(gcm, "device", device_wrapper)
+    def _handle_icm(self, icm):
+        self.configs = self._parse_type(icm, "config", config_wrapper)
+        self.applications = self._parse_type(icm, "application", application_wrapper)
+        self.devices = self._parse_type(icm, "device", device_wrapper)
 
     def read_xml(self, file):
         dom = xml.dom.minidom.parse(file)
-        self._handle_gcm(dom)
+        self._handle_icm(dom)
 
 def get_parser():
-    search_paths = [ ".", "./connman", "./gcm/connman" ]
+    search_paths = [ ".", "./connman", "./icm/connman" ]
     for sp in search_paths:
         file_path = os.path.abspath(os.path.join(sp, "config.xml"))
         if os.path.exists(file_path):

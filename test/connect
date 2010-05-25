@@ -1,5 +1,5 @@
 #!/usr/bin/python
-#  GENIVI Connection Manager
+#  IVI Connection Manager
 #
 #  Copyright (C) 2010  BMW Car IT GmbH. All rights reserved.
 #
@@ -30,15 +30,15 @@ def catchall_signal_handler(*args, **kwargs):
 
 def timeoutcb(bus, id):
     try:
-        gcm = bus.get_object('org.genivi.gcm', '/')
-        path = gcm.CreateGcmService(int(id), dbus_interface = 'org.genivi.gcm.Manager')
+        icm = bus.get_object('de.bmwcarit.icm', '/')
+        path = icm.CreateIcmService(int(id), dbus_interface = 'de.bmwcarit.icm.Manager')
     except:
-        print "failed to create gcm service, assume it already exists"
+        print "failed to create icm service, assume it already exists"
         path = "/service/0"
 
     try:
-        gcm_service = bus.get_object('org.genivi.gcm', path)
-        gcm_service.ConnectionRequest(dbus_interface = 'org.genivi.gcm.GcmService')
+        icm_service = bus.get_object('de.bmwcarit.icm', path)
+        icm_service.ConnectionRequest(dbus_interface = 'de.bmwcarit.icm.IcmService')
     except:
         print "could not request a connection"
 

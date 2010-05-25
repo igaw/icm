@@ -16,7 +16,7 @@ ofono:
   modem appears for a second and then if there was no auto power we could
   power it up then.
 
-gcm:
+icm:
 
-- retry logic: if a connection has been requested gcm should retry until
+- retry logic: if a connection has been requested icm should retry until
   it is successfull.

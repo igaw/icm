@@ -1,4 +1,4 @@
-#  GENIVI Connection Manager
+#  IVI Connection Manager
 #
 #  Copyright (C) 2010  BMW Car IT GmbH. All rights reserved.
 #
@@ -22,7 +22,7 @@ import gobject
 import logging
 import traceback
 
-class GcmService(dbus.service.Object):
+class IcmService(dbus.service.Object):
     def __init__(self, app_id, sender):
         dbus.service.Object.__init__(self)
         self._state = "no service selected"
@@ -33,7 +33,7 @@ class GcmService(dbus.service.Object):
         self._name = ""
 
     # dbus interface
-    @dbus.service.method("org.genivi.gcm.GcmService", in_signature="", out_signature="a{sv}")
+    @dbus.service.method("de.bmwcarit.icm.IcmService", in_signature="", out_signature="a{sv}")
     def GetProperties(self):
         logging.debug("get properties")
         return { "State" : self._state,
@@ -41,17 +41,17 @@ class GcmService(dbus.service.Object):
                  "TX.Bytes" : self._TX_Bytes,
                  "Name": self._name}
 
-    @dbus.service.signal("org.genivi.gcm.GcmService", signature="sv")
+    @dbus.service.signal("de.bmwcarit.icm.IcmService", signature="sv")
     def PropertyChanged(self, key, value):
         logging.debug("sending property changed signal for %s %s" % (key, value))
 
-    @dbus.service.method("org.genivi.gcm.GcmService", in_signature="sv", out_signature="")
+    @dbus.service.method("de.bmwcarit.icm.IcmService", in_signature="sv", out_signature="")
     def SetProperty(self, key, value):
         logging.debug("set property %s to %s" % (str(key), str(value)))
         if key == "State":
             self._state = str(value)
 
-    @dbus.service.method("org.genivi.gcm.GcmService", in_signature="", out_signature="",
+    @dbus.service.method("de.bmwcarit.icm.IcmService", in_signature="", out_signature="",
                          sender_keyword="sender")
     def ConnectionRequest(self, sender=None):
         logging.debug("connection request from %s" % sender)
@@ -60,7 +60,7 @@ class GcmService(dbus.service.Object):
         except:
             traceback.print_exc()
 
-    @dbus.service.method("org.genivi.gcm.GcmService", in_signature="", out_signature="",
+    @dbus.service.method("de.bmwcarit.icm.IcmService", in_signature="", out_signature="",
                          sender_keyword="sender")
     def ConnectionRelease(self, sender=None):
         logging.debug("connection release from %s" % sender)
@@ -73,7 +73,7 @@ class GcmService(dbus.service.Object):
 
 
 
-class GcmServiceWrapper(gobject.GObject):
+class IcmServiceWrapper(gobject.GObject):
     __gsignals__ = {
         "request-connection": (gobject.SIGNAL_RUN_FIRST,
                                gobject.TYPE_NONE,
@@ -90,7 +90,7 @@ class GcmServiceWrapper(gobject.GObject):
         gobject.GObject.__init__(self)
         self.bus = bus
         self.uid = uid
-        self._gcm_service = GcmService(app_id, self)
+        self._icm_service = IcmService(app_id, self)
         self._interface_name = ""
 
     def request_connection(self, id):
@@ -109,20 +109,20 @@ class GcmServiceWrapper(gobject.GObject):
 
     def set_connection_state(self, state):
         logging.debug("set connection state to %s" % state)
-        self._gcm_service._state = state
-        self._gcm_service.PropertyChanged("State", self._gcm_service._state)
+        self._icm_service._state = state
+        self._icm_service.PropertyChanged("State", self._icm_service._state)
 
     def handle_counter_update(self, manager, counter):
         if counter.interface == self._interface_name:
-            self._gcm_service._TX_Bytes = counter.TX_Bytes
-            self._gcm_service._RX_Bytes = counter.RX_Bytes
-            self._gcm_service.PropertyChanged("TX.Bytes", self._gcm_service._TX_Bytes)
-            self._gcm_service.PropertyChanged("RX.Bytes", self._gcm_service._RX_Bytes)
+            self._icm_service._TX_Bytes = counter.TX_Bytes
+            self._icm_service._RX_Bytes = counter.RX_Bytes
+            self._icm_service.PropertyChanged("TX.Bytes", self._icm_service._TX_Bytes)
+            self._icm_service.PropertyChanged("RX.Bytes", self._icm_service._RX_Bytes)
 
     def set_name(self, name):
         logging.debug("set service name to '%s'" % (name))
-        self._gcm_service._name = name
-        self._gcm_service.PropertyChanged("Name", self._gcm_service._name)
+        self._icm_service._name = name
+        self._icm_service.PropertyChanged("Name", self._icm_service._name)
 
     def set_interface(self, interface_name):
         self._interface_name = interface_name

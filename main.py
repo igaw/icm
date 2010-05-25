@@ -1,4 +1,4 @@
-#  GENIVI Connection Manager
+#  IVI Connection Manager
 #
 #  Copyright (C) 2010  BMW Car IT GmbH. All rights reserved.
 #
@@ -27,16 +27,16 @@ import logging
 import traceback
 
 import manager
-import gcm
+import icm
 
 def main():
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
     bus = dbus.SystemBus()
-    name = dbus.service.BusName("org.genivi.gcm", bus)
+    name = dbus.service.BusName("de.bmwcarit.icm", bus)
 
     mgr = manager.ManagerWrapper(bus)
-    cm = gcm.GCM(bus, mgr)
+    cm = icm.ICM(bus, mgr)
 
     mainloop = gobject.MainLoop()
     mainloop.run()
@@ -52,4 +52,4 @@ if __name__ == '__main__':
         tracer.run('main()')
     except KeyboardInterrupt:
         r = tracer.results()
-        r.write_results(show_missing=True, coverdir="/tmp/gcm")
+        r.write_results(show_missing=True, coverdir="/tmp/icm")

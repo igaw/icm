@@ -1,4 +1,4 @@
-#  GENIVI Connection Manager
+#  IVI Connection Manager
 #
 #  Copyright (C) 2010  BMW Car IT GmbH. All rights reserved.
 #
@@ -20,8 +20,8 @@ import logging
 import gtk
 import dbus
 
-import gcm.manager
-import gcm.gcm_service
+import icm.manager
+import icm.icm_service
 
 import stats
 import app_streaming
@@ -90,7 +90,7 @@ class demo(gtk.Window):
         return True
 
     def _title_changed_cb (self, tabbed_pane, frame, title, toolbar):
-        self.set_title(_("GENIVI Connection Management Deno"))
+        self.set_title(_("IVI Connection Management Deno"))
         load_committed_cb(tabbed_pane, frame, toolbar)
 
     def expose(self, widget, ev):
@@ -125,4 +125,4 @@ if __name__ == "__main__":
         tracer.run('main()')
     except KeyboardInterrupt:
         r = tracer.results()
-        r.write_results(show_missing=True, coverdir="/tmp/gcm-demo")
+        r.write_results(show_missing=True, coverdir="/tmp/icm-demo")

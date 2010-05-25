@@ -5,8 +5,6 @@ This is just a proof of concept for an IVI connectio manager. The aim
 is to prototyp such a system with connman and ofono. After this phase
 a C implementation will be done.
 
-
-
 - Install sudo cp icm.conf /etc/dbus-1/system.d/ sudo killall -HUP
     dbus-daemon
 
@@ -61,12 +59,4 @@ a C implementation will be done.
     $ python main.py
 
 - Dependencie:
-  icm:
     python dbus
-
-  demo:
-    pygtk
-    pywebkitgtk
-    pygst
-
-    icons: http://www.oxygen-icons.org
